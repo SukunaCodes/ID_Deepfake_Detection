@@ -1,11 +1,11 @@
 import cv2
-import sys, os.path
+import os.path
 import json
-import http.client, urllib.request, urllib.parse, urllib.error, base64
+import http.client, urllib.parse, urllib.error
 
 base_path = '.\\Training Sample Videos\\'
-AZURE_COMPUTER_VISION_NAME = ''  # Input service_name from Azure site.
-AZURE_COMPUTER_VISION_API_KEY = ''  # Input API key from Azure account.
+AZURE_COMPUTER_VISION_NAME = '89724-final-cse.cognitiveservices.azure.com'  # Azure endpoint URL.
+AZURE_COMPUTER_VISION_API_KEY = 'bd324703687f4679b7a7af4340b2dc0d'  # Input API key from Azure account.
 
 
 def get_file_name(file_path):
@@ -39,7 +39,7 @@ for filename in metadata.keys():
         headers = {
             # Request header
             'Content-Type': 'application/octet-stream',
-            'Ocp-Apim-Subscription-Key': 'AZURE_COMPUTER_VISION_API_KEY',
+            'Ocp-Apim-Subscription-Key': AZURE_COMPUTER_VISION_API_KEY,
         }
 
         params = urllib.parse.urlencode({
@@ -49,13 +49,13 @@ for filename in metadata.keys():
 
         try:
             conn = http.client.HTTPSConnection(AZURE_COMPUTER_VISION_NAME)
-            conn.request('POST', '/vision/v3.0/analyze?%s" % params, img_data, headers')
+            conn.request('POST', '/vision/v3.0/analyze?%s' % params, img_data, headers)
             response = conn.getresponse().read()
             data = json.loads(response.decode('utf-8'))
             print(data)
             conn.close()
-        except Exception as e:
-            print('[Errno {0}] {1}".format(e.errno, e.strerror)')
+        except IOError as e:
+            print('[Errno {0}] {1}'.format(e.errno, e.strerror))
             continue
 
         print(data['faces'])
@@ -63,11 +63,8 @@ for filename in metadata.keys():
         count = 0
 
         for result in data['faces']:
-            bounding_box = []
-            bounding_box.append(result['faceRectangle']['left'])
-            bounding_box.append(result['faceRectangle']['top'])
-            bounding_box.append(result['faceRectangle']['width'])
-            bounding_box.append(result['faceRectangle']['height'])
+            bounding_box = [result['faceRectangle']['left'], result['faceRectangle']['top'],
+                            result['faceRectangle']['width'], result['faceRectangle']['height']]
             print(bounding_box)
 
             margin_x = bounding_box[2] * 0.3  # Occupies 30% as the margin
