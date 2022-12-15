@@ -1,11 +1,17 @@
-import cv2
-import os.path
+import http.client
 import json
-import http.client, urllib.parse, urllib.error
+import os.path
+import urllib.error
+import urllib.parse
+
+import cv2
+from dotenv import load_dotenv
+
+load_dotenv()
 
 base_path = '.\\Training Sample Videos\\'
-AZURE_COMPUTER_VISION_NAME = '89724-final-cse.cognitiveservices.azure.com'  # Azure endpoint URL.
-AZURE_COMPUTER_VISION_API_KEY = 'bd324703687f4679b7a7af4340b2dc0d'  # Input API key from Azure account.
+AZURE_COMPUTER_VISION_NAME = os.getenv('AZURE_COMPUTER_VISION_NAME')  # Azure endpoint URL.
+AZURE_COMPUTER_VISION_API_KEY = os.getenv('AZURE_COMPUTER_VISION_API_KEY')  # Input API key from Azure account.
 
 
 def get_file_name(file_path):
